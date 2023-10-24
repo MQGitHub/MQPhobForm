@@ -199,7 +199,7 @@ function sendtext(e) {
   htmlBody: body,
   replyTo: "mqphobgcc@gmail.com"
   });
-
+//add sarah email, if bald buttons, paracords, or ergo triggers involved. include amount owed to sarah.
   var taskListId = 'Ymw5U2tVbFJhbVdRRXNWdg';
 
 
