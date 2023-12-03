@@ -2,11 +2,32 @@
 // a page break, then a date question and a grid of questions.
 
 //Clear form for when form is complete and want to update
+
+var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1lQ6CJU3yoyuayNaS4AFGL4p1FFjEacyk8G2KmqOvKzk/edit#gid=0")
+
 function clearForm(form){
   var items = form.getItems();
   while(items.length > 0){
     form.deleteItem(items.pop());
   }
+}
+
+function formPopulator(mod, name) {
+  var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1lQ6CJU3yoyuayNaS4AFGL4p1FFjEacyk8G2KmqOvKzk/edit#gid=0")
+  var modSheet = populateMod(sheet, name);
+  if (modSheet.description){
+    mod.setHelpText(modSheet.description);
+  }
+  if (!modSheet.symmetry) {
+    Logger.log(modSheet.typeInfo);
+    mod.setChoiceValues(modSheet.modsName);
+  } else {
+    mod.setRows(modSheet.modsName);
+    mod.setColumns(modSheet.symmetry);
+  }
+  mod.setTitle(name);
+
+  
 }
 //Create form
 function createForm(){
@@ -40,36 +61,83 @@ function createForm(){
 
   //Create pages
 
-  var shellPage = form.addPageBreakItem().setTitle('Shell');
+  var shell = 'Shell'
+  var shellPage = form.addPageBreakItem().setTitle(shell);
   var shellMCItem = form.addCheckboxGridItem();
+  shellMCItem.setRequired(true);
   var customshellItem = form.addTextItem();
+  customshellItem.setTitle('Commission idea (custom paint job) or shell name or any other details. Will contact.');
+  formPopulator(shellMCItem, shell);
 
   var repairPage = form.addPageBreakItem().setTitle('Repairs');
 
   var problemItem = form.addParagraphTextItem();
+  problemItem.setTitle('Please describe the problem and/or choose the repair below')
+  //problemItem.setHelpText('Please describe the problem and/or choose the repair below');
+
   var stickboxRepairItem = form.addCheckboxGridItem();
+  var stickboxrepair = 'Stickbox Repair';
+  formPopulator(stickboxRepairItem, stickboxrepair);
+
   var triggerRepairItem = form.addCheckboxGridItem();
-  var cableRepairItem = form.addCheckboxGridItem();
+  var triggerrepair = 'Trigger Repair';
+  formPopulator(triggerRepairItem, triggerrepair);
+
+  var cableRepairItem = form.addCheckboxItem();
+  var cablerepair = 'Cable Repair';
+  formPopulator(cableRepairItem, cablerepair);
 
   var customorderPage = form.addPageBreakItem().setTitle('Custom Orders');
+  customorderPage.setHelpText('Almost exclusively mint JP whites shells and internals. Stickboxes depend on customer preference.');
 
   var oemItem = form.addMultipleChoiceItem();
+  var oem = 'OEM';
+  formPopulator(oemItem, oem);
+
   var characterItem = form.addTextItem();
-  var customstickboxItem = form.addMultipleChoiceItem();
-  var magnetItem = form.addCheckboxItem();
+  characterItem.setTitle('Character Main');
+  characterItem.setHelpText('Will use for calibration purposes and suggestions');
+
+  var customstickboxItem = form.addCheckboxGridItem();
+  var customstickbox = 'Custom Stickbox';
+  formPopulator(customstickboxItem, customstickbox);
+
+  var magnetItem = form.addCheckboxGridItem();
+  var magnet = 'Stickbox Magnet'
+  formPopulator(magnetItem, magnet);
 
   var modPage = form.addPageBreakItem().setTitle('Mods');
 
   var notchItem = form.addCheckboxItem();
+  var notch = 'Notches';
+  formPopulator(notchItem, notch);
+
   var buttonItem = form.addCheckboxItem();
+  var button = 'Buttons';
+  formPopulator(buttonItem, button);
+
   var stickboxItem = form.addCheckboxGridItem();
+  var stickbox = 'Stickbox';
+  formPopulator(stickboxItem, stickbox);
+
   var triggerItem = form.addCheckboxGridItem();
-  var cableItem = form.addCheckboxGridItem();
+  var trigger = 'Triggers';
+  formPopulator(triggerItem, trigger);
+
+  var cableItem = form.addCheckboxItem();
+  var cable = 'Cable';
+  formPopulator(cableItem, cable);
 
 
   var submitPage = form.addPageBreakItem().setTitle('Contact Information and Time Due');
   var shippingItem = form.addParagraphTextItem();
+  shippingItem.setTitle('Shipping Address, Name, and anything else you think I need to know.')
+  shippingItem.setRequired(true);
   var timedueItem = form.addListItem();
+  timedueItem.setTitle('Time Due');
+  timedueItem.setHelpText('When you will need the controller. 2-3 Weeks lead time per order. For priority orders the extra cost is calculated by 5 * queue count, so if there are 3 orders in queue, you pay $15. I will contact you ASAP with how much the additional cost is.')
+  timedueItem.setChoiceValues(['Regular, Priority']);
+  timedueItem.setRequired(true);
 
   //Set where page goes to once completed (sets where previous page goes to, very stupid imo)
   repairPage.setGoToPage(modPage); //shell before
@@ -85,4 +153,6 @@ function createForm(){
 
   Logger.log('Published URL: ' + form.getPublishedUrl());
   Logger.log('Editor URL: ' + form.getEditUrl());
+  
+
 }
