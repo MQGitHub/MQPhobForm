@@ -33,6 +33,59 @@ class Type {
    }
   }
 
+  get price(){
+    var sum = 0;
+    this.mods.forEach((mod) => {
+      sum += mod.prices[0];
+    });
+  }  
+  
+  get prettyType(){
+    var output = '';
+    var names = this.modsName;
+    if (this.symmetry){
+      var output1 = '<strong>';
+      output1+= this.symmetry[0] + ":</strong> <br>";
+      var output2 = '<strong>';
+      output2 += this.symmetry[1] + ":</strong> <br>"
+    } else {
+      var output = '<strong>' + this.name + ":</strong> <br>" ;
+    };
+    this.mods.forEach((mod) => {
+      //Logger.log(mod.name + " " + mod.prices[0] + " " + mod.options);
+      if (this.name === "Shell") {
+        output = '<strong>' + this.name + "(" + mod.options[0] + "): </strong> <br>" + 
+        '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        return;
+      }
+      if (mod.options) {
+        var options = mod.options[0].split(', ')
+      }
+      if (this.symmetry && options[0] === this.symmetry[0]) {
+        output1 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        //Logger.log("o1: " + output1);
+      }
+      if (this.symmetry && options[1] === this.symmetry[1]) {
+        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        //Logger.log("o2: " + output2);
+      } else if (this.symmetry && options[0] === this.symmetry[1]) {
+        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        //Logger.log("o22: " + output2);
+      }
+      if (!this.symmetry) {
+        output += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        //Logger.log("output: " + output);
+      }
+    });
+
+    if (output === ''){
+      output += output1 + output2
+    }
+    
+    //Logger.log(output);
+    return output;
+  }
+
   updateMods(mod, sheetObj, options = []){
     sheet = sheetObj.getSheetByName(this.name);
     modsfromSheet = sheet.getDataRange().getValues();

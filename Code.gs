@@ -5,7 +5,6 @@ function formPopulator(name) {
     mod.setHelpText(modSheet.description);
   }
   if (!modSheet.symmetry) {
-    //Logger.log(modSheet.typeInfo);
     mod.setChoiceValues(modSheet.modsName);
   } else {
     mod.setRows(modSheet.modsName);
@@ -97,45 +96,45 @@ function sendtext(e) {
   const formName = formSheet.getSheetName();
   const formDict = e.namedValues;*/
   const formDict = {
-    "Stickbox [Slickbox]": ["Grey Stick, C Stick"],
-    "Timestamp": ["5/13/2024 23:42:48"],
+    "Buttons": ["Tactile Z, Bald Buttons"],
+    "Cable": ["OEM 2 Metres"],
+    "Cable Repair": [],
+    "Character Main": [],
+    "Commission idea (custom paint job) or shell name or any other details. Will contact.": ["commission idea"],
     "Custom Stickbox [Factory New Tightness]": [],
     "Custom Stickbox [Tight]": [],
-    "Shipping Address, Name, and anything else you think I need to know.": ["shippingbox"],
-    "Please describe the problem and/or choose the repair below": [],
-    "OEM": [],
-    "Buttons": ["Tactile Z, Bald Buttons"],
-    "Service": ["Full Phob Controller"],
-    "Shell [White or Emerald]": ["Like New"],
-    "Stickbox [Replacement]": [],
-    "Shell [Standard (black, indigo, orange)]": [],
-    "Triggers [Mouseclick]": ["Right"],
-    "Triggers [Low Force]": [],
-    "Stickbox [Wavespring]": [],
-    "Stickbox Repair [Snapback Capacitor]": [],
-    "Time Due": ["Regular"],
-    "Stickbox Magnet [N30H]": [],
-    "Stickbox [Lubrication]": ["Grey Stick"],
     "Custom Stickbox [Worn in]": [],
-    "Triggers [Half Plug]": ["Left"],
-    "Triggers [Ergo Trigger]": ["Left, Right"],
-    "Cable": ["OEM 2 Metres"],
-    "Trigger Repair [Trigger Pot Replacement]": [],
-    "Cable Repair": [],
-    "Shell [Custom Shell]": [],
-    "Stickbox Repair [Potentiometer Replacement]": [],
-    "Triggers [Full Plug]": ["Right"],
-    "Shell [Mario]": [],
-    "Stickbox Repair [Snapback Module]": [],
     "Discord": ["discordtest"],
-    "Stickbox Magnet [D12]": [],
     "Email": ["test@email.com"],
-    "Stickbox Magnet [DH1H1]": [],
-    "Character Main": [],
-    "Tag": ["test"],
     "Notches": ["Firefox Notches (No bottom notches)"],
-    "Commission idea (custom paint job) or shell name or any other details. Will contact.": ["commission idea"]
-  }
+    "OEM": [],
+    "Please describe the problem and/or choose the repair below": [],
+    "Service": ["Full Phob Controller"],
+    "Shell [Custom Shell]": [],
+    "Shell [Mario]": [],
+    "Shell [Standard (black, indigo, orange)]": [],
+    "Shell [White or Emerald]": ["Like New"],
+    "Shipping Address, Name, and anything else you think I need to know.": ["shippingbox"],
+    "Stickbox [Lubrication]": ["Grey Stick"],
+    "Stickbox [Replacement]": [],
+    "Stickbox [Slickbox]": ["Grey Stick, C Stick"],
+    "Stickbox [Wavespring]": [],
+    "Stickbox Magnet [D12]": [],
+    "Stickbox Magnet [DH1H1]": [],
+    "Stickbox Magnet [N30H]": [],
+    "Stickbox Repair [Potentiometer Replacement]": [],
+    "Stickbox Repair [Snapback Capacitor]": [],
+    "Stickbox Repair [Snapback Module]": [],
+    "Time Due": ["Regular"],
+    "Timestamp": ["5/13/2024 23:42:48"],
+    "Tag": ["test"],
+    "Triggers [Ergo Trigger]": ["Left, Right"],
+    "Triggers [Full Plug]": ["Right"],
+    "Triggers [Half Plug]": ["Left"],
+    "Triggers [Low Force]": [],
+    "Triggers [Mouseclick]": ["Right"],
+    "Trigger Repair [Trigger Pot Replacement]": []
+};
 
   //pull variables from form
   var type = formDict["Service"][0];
@@ -173,7 +172,7 @@ function sendtext(e) {
       continue;
     };
 
-    Logger.log("mod key " + modKey);
+    //Logger.log("mod key " + modKey);
     var modsSplit = modKey[0].split(", ") // some mods are in modType['mod1, mod2'] format
     const regex = /(.*)\W\[(.*?)\]/; // Regular expression to match modType [modName]
     const matches = key.match(regex);
@@ -181,34 +180,26 @@ function sendtext(e) {
     if (matches) {
       const modType = matches[1];
       const modName = matches[0].replace(/.*?\[(.*?)\].*/, '$1');//matches.map(match => match.replace(/\[|\]/g, '')); 
-      Logger.log("modtype " + modType);// Remove square brackets and place in array
+      //Logger.log("modtype " + modType);// Remove square brackets and place in array
       if (!userType[modType]) {
-        /*if (modsSplit.length != 2){
-          userType[modType] = new Type(modType, userMod, false, ''); //populating with mod type 
-        } else {
-          userType[modType] = new Type(modType, userMod, modsSplit, '')
-        }*/
         try {
           userType[modType] = populateMod(sheet, modType, modName, modKey);
-          Logger.log("Type1: " + userType[modType].typeInfo);
+          //Logger.log("Type1: " + userType[modType].typeInfo);
         } catch (error) {
           delete userType[modType];
           console.log(error.message);
           continue;
         }
       } else {
-        Logger.log("M1: " + modName + " T: " + modType);
+        //Logger.log("M1: " + modName + " T: " + modType);
         userType[modType].updateMods(modName, sheet, modKey);
-        Logger.log("Type1: " + userType[modType].typeInfo);
+        //Logger.log("Type1: " + userType[modType].typeInfo);
         newMod = new Mod(modName, userType[modType], 0, modsSplit)
-        //Logger.log(newMod.modInfo);
-        //userMod.push(newMod);
       }
     } else { //when mod is not in grid format (not symmetrical like grey stick c stick)
       for (const m of modsSplit) {
-        Logger.log("key: " + key);
+        //Logger.log("key: " + key);
         if (!userType[key]) {
-          //userType[key] = new Type(key, userMod, false, '');
           try {
             userType[key] = populateMod(sheet, key, m);
             
@@ -217,12 +208,10 @@ function sendtext(e) {
             continue;
           }
         } else {
-          Logger.log("M2: " + m + " T: " + key);
+          //Logger.log("M2: " + m + " T: " + key);
           newMod = new Mod(userType[key], m, 0, [])
-          //Logger.log(newMod.modInfo);
           userType[key].updateMods(m, sheet)
-          Logger.log("Type2: " + userType[key].typeInfo);
-          //userMod.push(newMod);
+          //Logger.log("Type2: " + userType[key].typeInfo);
         }
       };
 
@@ -230,15 +219,7 @@ function sendtext(e) {
   };
 
   
-
-  for (let key in userType) {
-    if (userType.hasOwnProperty(key)) {
-      for (const m of userType[key].mods) {
-        Logger.log(m.modInfo);
-      }
-      Logger.log(userType[key].typeInfo);
-    }
-}
+  
 
   var priceIndex = 0; //NAPrice
   var currencySymbol = "$";
@@ -253,59 +234,30 @@ function sendtext(e) {
 
   //populate dict with customer order: prices
   var orderPrices = {};
-  //var priceSectionNames = [mods, shell, repair];
-  var repairText = '';
-  const priceDict = {}
-  const textDict = {}
+  var Sarah = ["Bald Buttons", "Ergo Triggers", "Paracord 2 Metres", "Paracord 3 Metres"];
+  var emailSarah = False;
+  var price = 0;
+  var fullServices = '';
+  var modsList = [];
+  for (let key in userType) {
+    if (userType.hasOwnProperty(key)) {
+      for (const m of userType[key].mods) {
+        Logger.log("code: " + m.modInfo);
+        price += m.prices[0];
+        if (Sarah.includes(m.name)){
+          emailSarah = True;
+        }
+      }
+      Logger.log("TEST: " + userType[key].prettyType);
+      fullServices += userType[key].prettyType;
+      if (userType[key].modsName.length > 0) {
+        modsList.push(userType[key].modsName);
+      }
+      Logger.log(fullServices);
+    }
+}
 
-  // create price list dict from Price List sheet
-  // populate each mod type with prices
-  /*
-  for (var i = 0; i < sheetNames.length; i++) {
-    var sheetTemp = e.source.getSheetByName(sheetNames[i])
-    modsfromSheet = sheetTemp.getDataRange().getValues();
-    var modText = [];
-    var priceText = [];
-    for (const mm of modsfromSheet){
-      //modsLists[i] = modDict{ "mod": [prices] }
-      //triggerDict{"Ergo": [30, 40, 30]}
-      //modKey = key in namedvalues
-      //Triggers [Ergo Trigger] or Buttons or Cable [3 Metres]
-      //cables are grid and price dependent on both row and column
-      if (mm[0] in userDict) {
-        var mod = mm[0];
-        modsLists[i][mod] = [parseInt(mm[1]), parseInt(mm[2]), parseInt(mm[3])];
-        priceDict[mod] = [parseInt(mm[1]), parseInt(mm[2]), parseInt(mm[3])];
-        userDict[mod] = userDict[mod].length == 0 ? userDict[mod] : [userDict[mod][0].split(" ,")];
-        var multiplier = mm[0].includes('Plug') || userDict[mod].length == 0 ? 1 : userDict[mod].length;
-        orderPrices[mod] = priceDict[mod][priceIndex]*multiplier;
-        if (userDict[mod] == 'Like New')  {
-          orderPrices[mod]+=20
-        }
-        if (mod == 'Full Plug' && orderPrices['Half Plug'] != undefined){
-          orderPrices[mod] = 0;
-        } else if (mod == 'Half Plug' && orderPrices['Full Plug'] != undefined){ 
-          orderPrices[mod] = 0;
-        }
-        if (mod === 'Lubrication' && type !== 'Install') {
-          orderPrices[mod] = 0;
-        }
-        priceText.push(currencySymbol + orderPrices[mod]);
-        modText.push(mod);
-        if (userDict[mod].length != 0) {
-          for (const sym of userDict[mod]) {
-            textDict[sym] = [modText, priceText];
-            Logger.log(userDict[mod] + " " + textDict[sym] + " " + sym)
-          };
-        } else {
-          textDict[sheetNames[i]] = [modText, priceText];
-        };
-      };
-      
-    };
-  };
-
-  */
+var names = modsList.flat().join(', ');
 
   //make function that sums the values in a dict
   const sumValues = obj => Object.values(obj).reduce((a, b) => a + b, 0);
@@ -321,13 +273,13 @@ function sendtext(e) {
       notesTextTasks += note + ': ' + notes[note] + "\n";
     };
   });
-  var services = '';
+  /*var services = '';
   for (const s in textDict) {
     if (s === 'Type of Serivce') {
       continue;
     }
     services += s + ": " + textDict[s][0].join(", ") + "<br>";
-  };
+  };*/
 
   // create the email 
   var subject = "MQ - " + name + " - " + type + " - Queue - " + timeDue;
@@ -336,13 +288,12 @@ function sendtext(e) {
     "Thank you for submitting your order. Here are the details of your order:<br><br>" +
     "Contact: " + contact + "<br>" +
     "Order type: " + type + "<br>" +
-    services +
-    "Price: " + currencySymbol + sumPrices + "<br>" +
+     names + "<br>" +
+    "Price: " + currencySymbol + price + "<br>" +
     notesText + "<br>" +
-    "The following is the list of services and their prices:<br><br>";
-  for (var key in orderPrices) {
-    body += key + ": " + currencySymbol + orderPrices[key] + "<br>";
-  };
+    "The following is the list of services and their prices:<br><br>" + 
+    fullServices + "<br>"; //key + ": " + currencySymbol + orderPrices[key] + "<br>";
+  
 
   body += "<br>Thank you for choosing MQ Mods!<br><br>" +
     "Best regards,<br>" +
@@ -368,6 +319,15 @@ function sendtext(e) {
     htmlBody: body,
     replyTo: "mqphobgcc@gmail.com"
   });
+  if (emailSarah){
+    MailApp.sendEmail({
+    to: "blankscribbles@gmail.com",
+    subject: subject,
+    htmlBody: body,
+    replyTo: "mqphobgcc@gmail.com"
+  });
+  }
+
   //add sarah email, if bald buttons, paracords, or ergo triggers involved. include amount owed to sarah.
   var taskListId = 'Ymw5U2tVbFJhbVdRRXNWdg';
 
@@ -376,7 +336,7 @@ function sendtext(e) {
   type = type.toString().replace(/[\-\$\d]/g, "");
   let task = {
     title: name + " - " + type + " " + " - " + timeDue + " - $" + sumPrices,
-    notes: "Mods: " + services + "\n" +
+    notes: "Mods: " + names + "\n" +
       "Price: " + currencySymbol + sumPrices + "\n" +
       notesTextTasks
   };
