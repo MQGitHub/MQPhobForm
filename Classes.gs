@@ -33,11 +33,26 @@ class Type {
    }
   }
 
-  get price(){
+  price(service){
     var sum = 0;
     this.mods.forEach((mod) => {
+      if (mod.name === "Lubrication") {
+        if (!(service === "Repair Job or Mods" || service === "Install")) {
+          return;
+        }
+      }
+      
+      if (this.symmetry){
+        let temp = mod.options[0].split(', ');
+        //mod.options[0].split(', '.length);
+        if(temp.length > 1){
+          sum += mod.prices[0];
+        }
+      }
       sum += mod.prices[0];
+      Logger.log(sum + " : " + mod.name);
     });
+  return sum;
   }  
   
   get prettyType(){

@@ -23,16 +23,16 @@ function sendtext(e) {
   var stickboxRepairItem = populateMod(sheet, stickboxrepair);
 
 
-  Logger.log(stickboxRepairItem.typeInfo);
+  //Logger.log(stickboxRepairItem.typeInfo);
   stickboxRepairItem.mods.forEach((modinType) => {
-    Logger.log("stickboxrepair: " + modinType.modInfo)
+    //Logger.log("stickboxrepair: " + modinType.modInfo)
   });
   //formPopulator(stickboxRepairItem, stickboxrepair);
 
   var stickbox = 'Stickbox';
   var stickboxItem = populateMod(sheet, stickbox);
   stickboxItem.mods.forEach((modinType) => {
-    Logger.log("stickbox: " + modinType.modInfo)
+    //Logger.log("stickbox: " + modinType.modInfo)
   });
 
   //formPopulator(stickboxItem, stickbox);
@@ -88,53 +88,54 @@ function sendtext(e) {
   //const formName = formSheet.getSheetName();
   //const formDict = e.namedValues;
 
-  /*Logger.log(e.namedValues); 
-  Logger.log(e.namedValues["Stickbox [Lubrication]"]);
-  Logger.log(e.namedValues["Custom Stickbox [Factory New Tightness]"]);
+  //Logger.log(e.namedValues); 
+  //Logger.log(e.namedValues["Stickbox [Lubrication]"]);
+  //Logger.log(e.namedValues["Custom Stickbox [Factory New Tightness]"]);
 
-  const formSheet = e.range.getSheet();
-  const formName = formSheet.getSheetName();
-  const formDict = e.namedValues;*/
-  const formDict = {
-    "Buttons": ["Tactile Z, Bald Buttons"],
-    "Cable": ["OEM 2 Metres"],
-    "Cable Repair": [],
-    "Character Main": [],
-    "Commission idea (custom paint job) or shell name or any other details. Will contact.": ["commission idea"],
-    "Custom Stickbox [Factory New Tightness]": [],
-    "Custom Stickbox [Tight]": [],
-    "Custom Stickbox [Worn in]": [],
-    "Discord": ["discordtest"],
-    "Email": ["test@email.com"],
-    "Notches": ["Firefox Notches (No bottom notches)"],
-    "OEM": [],
-    "Please describe the problem and/or choose the repair below": [],
-    "Service": ["Full Phob Controller"],
-    "Shell [Custom Shell]": [],
-    "Shell [Mario]": [],
+  //const formSheet = e.range.getSheet();
+  //const formName = formSheet.getSheetName();
+  const formDict = e.namedValues;
+  /*const formDict = {
+    "Stickbox [Replacement]": ["C Stick"],
     "Shell [Standard (black, indigo, orange)]": [],
-    "Shell [White or Emerald]": ["Like New"],
-    "Shipping Address, Name, and anything else you think I need to know.": ["shippingbox"],
-    "Stickbox [Lubrication]": ["Grey Stick"],
-    "Stickbox [Replacement]": [],
-    "Stickbox [Slickbox]": ["Grey Stick, C Stick"],
-    "Stickbox [Wavespring]": [],
+    "Stickbox [Lubrication]": ["Grey Stick, C Stick"],
+    "Shell [Custom Shell]": [],
+    "Please describe the problem and/or choose the repair below": [],
+    "Shipping Address, Name, and anything else you think I need to know.": ["repair"],
     "Stickbox Magnet [D12]": [],
-    "Stickbox Magnet [DH1H1]": [],
+    "Custom Stickbox [Worn in]": [],
+    "Custom Stickbox [Factory New Tightness]": [],
+    "Service": ["Repair Job or Mods"],
+    "Tag": ["repair"],
+    "Buttons": ["Tactile Z, Bald Buttons"],
+    "Character Main": [],
     "Stickbox Magnet [N30H]": [],
-    "Stickbox Repair [Potentiometer Replacement]": [],
     "Stickbox Repair [Snapback Capacitor]": [],
-    "Stickbox Repair [Snapback Module]": [],
-    "Time Due": ["Regular"],
-    "Timestamp": ["5/13/2024 23:42:48"],
-    "Tag": ["test"],
+    "Discord": ["repair"],
+    "Stickbox Magnet [DH1H1]": [],
+    "Cable": [],
+    "Timestamp": ["6/10/2024 14:27:06"],
+    "Triggers [Half Plug]": [],
+    "Triggers [Full Plug]": [],
+    "Triggers [Mouseclick]": ["Left"],
+    "Time Due": ["Priority"],
+    "Stickbox Repair [Snapback Module]": ["C Stick"],
+    "Notches": ["Wavedash Notches"],
     "Triggers [Ergo Trigger]": ["Left, Right"],
-    "Triggers [Full Plug]": ["Right"],
-    "Triggers [Half Plug]": ["Left"],
     "Triggers [Low Force]": [],
-    "Triggers [Mouseclick]": ["Right"],
-    "Trigger Repair [Trigger Pot Replacement]": []
-};
+    "Stickbox Repair [Potentiometer Replacement]": ["Grey Stick"],
+    "Commission idea (custom paint job) or shell name or any other details. Will contact.": [],
+    "Stickbox [Wavespring]": [],
+    "OEM": [],
+    "Trigger Repair [Trigger Pot Replacement]": ["Left"],
+    "Stickbox [Slickbox]": [],
+    "Shell [Mario]": [],
+    "Shell [White or Emerald]": [],
+    "Email": ["test@gmail.com"],
+    "Cable Repair": ["OEM 3 Metres"],
+    "Custom Stickbox [Tight]": []
+};*/
+
 
   //pull variables from form
   var type = formDict["Service"][0];
@@ -235,25 +236,26 @@ function sendtext(e) {
   //populate dict with customer order: prices
   var orderPrices = {};
   var Sarah = ["Bald Buttons", "Ergo Triggers", "Paracord 2 Metres", "Paracord 3 Metres"];
-  var emailSarah = False;
+  var emailSarah = false;
   var price = 0;
   var fullServices = '';
   var modsList = [];
   for (let key in userType) {
     if (userType.hasOwnProperty(key)) {
       for (const m of userType[key].mods) {
-        Logger.log("code: " + m.modInfo);
-        price += m.prices[0];
+        
+        
         if (Sarah.includes(m.name)){
-          emailSarah = True;
+          emailSarah = true;
         }
       }
-      Logger.log("TEST: " + userType[key].prettyType);
-      fullServices += userType[key].prettyType;
+      price += userType[key].price(type);
+      //Logger.log("TEST: " + userType[key].prettyType);
       if (userType[key].modsName.length > 0) {
         modsList.push(userType[key].modsName);
+        fullServices += userType[key].prettyType;
       }
-      Logger.log(fullServices);
+      //Logger.log(fullServices);
     }
 }
 
@@ -264,7 +266,7 @@ var names = modsList.flat().join(', ');
   const sumPrices = sumValues(orderPrices);
 
   //seperating notes into categories
-  var notes = { "Problem": problem, "Custom Shell": customShell, "Additional Contact / Shipping": contactInfo };
+  var notes = { "Problem": problem, "Custom Shell": customShell, "Additional Contact / Shipping": prsn.shipping };
   var notesText = '';
   var notesTextTasks = '';
   Object.keys(notes).forEach(function (note) {
@@ -273,22 +275,15 @@ var names = modsList.flat().join(', ');
       notesTextTasks += note + ': ' + notes[note] + "\n";
     };
   });
-  /*var services = '';
-  for (const s in textDict) {
-    if (s === 'Type of Serivce') {
-      continue;
-    }
-    services += s + ": " + textDict[s][0].join(", ") + "<br>";
-  };*/
 
   // create the email 
-  var subject = "MQ - " + name + " - " + type + " - Queue - " + timeDue;
+  var subject = "MQ - " + prsn.name + " - " + type + " - " + timeDue + " Queue ";
   //subject = type === "Custom Order" ? subject : subject +=" - Queue - " + timeDue;
-  var body = "Dear " + name + ",<br><br>" +
-    "Thank you for submitting your order. Here are the details of your order:<br><br>" +
-    "Contact: " + contact + "<br>" +
+  var body = "Dear " + prsn.name + ",<br><br>" +
+    "Thank you for submitting your order. I will be contacting you within the next 2-3 days. Please feel free to contact me before that if you have any questions. Contact information below! Unless you selected priority queue or have a custom commission, this should be the final price. Here are the details of your order:<br><br>" +
+    "Contact: " + prsn.discord + "<br>" +
     "Order type: " + type + "<br>" +
-     names + "<br>" +
+     "Products: " + names + "<br>" +
     "Price: " + currencySymbol + price + "<br>" +
     notesText + "<br>" +
     "The following is the list of services and their prices:<br><br>" + 
@@ -298,7 +293,7 @@ var names = modsList.flat().join(', ');
   body += "<br>Thank you for choosing MQ Mods!<br><br>" +
     "Best regards,<br>" +
     "MQ<br><br>" +
-    "Discord: MQDiscord#0211<br>" +
+    "Discord: MQMods<br>" +
     "Twitter: <a href='https://twitter.com/MQMods'>twitter.com/MQMods</a><br>" +
     "Email: <a href='mailto:mqphobgcc@gmail.com'>mqphobgcc@gmail.com</a><br>" +
     "Phob Resource: <a href='https://phobg.cc'>phobg.cc</a><br>" +
@@ -321,7 +316,7 @@ var names = modsList.flat().join(', ');
   });
   if (emailSarah){
     MailApp.sendEmail({
-    to: "blankscribbles@gmail.com",
+    to: "sarahtsuipaysrent@gmail.com",
     subject: subject,
     htmlBody: body,
     replyTo: "mqphobgcc@gmail.com"
@@ -334,11 +329,14 @@ var names = modsList.flat().join(', ');
 
   // Task details with title and notes for inserting new task
   type = type.toString().replace(/[\-\$\d]/g, "");
+  let taskServices = fullServices.replace(/<br>/g, '\n');
+  taskServices = taskServices.replace(/<[^>]*>/g, '');
+  taskServices = taskServices.replace(/&nbsp;/g, ' ');
   let task = {
-    title: name + " - " + type + " " + " - " + timeDue + " - $" + sumPrices,
+    title: name + " - " + type + " " + " - " + timeDue + " - $" + price,
     notes: "Mods: " + names + "\n" +
-      "Price: " + currencySymbol + sumPrices + "\n" +
-      notesTextTasks
+      "Price: " + currencySymbol + price + "\n" +
+      notesTextTasks + "\n" + taskServices
   };
   try {
     // Call insert method with taskDetails and taskListId to insert Task to specified tasklist.
