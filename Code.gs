@@ -314,12 +314,13 @@ function sendtext(e) {
     replyTo: "mqphobgcc@gmail.com",
     bcc: "sarahtsuipaysrent@gmail.com"
   }) } else {
-  MailApp.sendEmail({
-    to: email,
-    subject: subject,
-    htmlBody: body,
-    replyTo: "mqphobgcc@gmail.com"
-  });
+    MailApp.sendEmail({
+      to: email,
+      subject: subject,
+      htmlBody: body,
+      replyTo: "mqphobgcc@gmail.com"
+    });
+  }
   body += "<br> Customer Email: " + email
   MailApp.sendEmail({
     to: "mqphobgcc@gmail.com",
@@ -327,7 +328,7 @@ function sendtext(e) {
     htmlBody: body,
     replyTo: "mqphobgcc@gmail.com"
   });
-  }
+  
   
   //add sarah email, if bald buttons, paracords, or ergo triggers involved. include amount owed to sarah.
   var taskListId = 'Ymw5U2tVbFJhbVdRRXNWdg';
