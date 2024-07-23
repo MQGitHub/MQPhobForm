@@ -20,46 +20,46 @@ function sendtext(e) {
   //var problemItem = form.addParagraphTextItem();
 
   var stickboxrepair = 'Stickbox Repair';
-  var stickboxRepairItem = populateMod(sheet, stickboxrepair);
+  //var stickboxRepairItem = populateMod(sheet, stickboxrepair);
 
 
-  //Logger.log(stickboxRepairItem.typeInfo);
+  /*Logger.log(stickboxRepairItem.typeInfo);
   stickboxRepairItem.mods.forEach((modinType) => {
-    //Logger.log("stickboxrepair: " + modinType.modInfo)
+    Logger.log("stickboxrepair: " + modinType.modInfo)
   });
-  //formPopulator(stickboxRepairItem, stickboxrepair);
-
+  formPopulator(stickboxRepairItem, stickboxrepair);
+  */
   var stickbox = 'Stickbox';
-  var stickboxItem = populateMod(sheet, stickbox);
-  stickboxItem.mods.forEach((modinType) => {
+  //var stickboxItem = populateMod(sheet, stickbox);
+  /*stickboxItem.mods.forEach((modinType) => {
     //Logger.log("stickbox: " + modinType.modInfo)
   });
-
+  */
   //formPopulator(stickboxItem, stickbox);
 
   var triggerrepair = 'Trigger Repair';
-  var triggerRepairItem = populateMod(sheet, triggerrepair);
+  //var triggerRepairItem = populateMod(sheet, triggerrepair);
 
   //formPopulator(triggerRepairItem, triggerrepair);
 
   var cablerepair = 'Cable Repair';
-  var cableRepairItem = populateMod(sheet, cablerepair);
+  //var cableRepairItem = populateMod(sheet, cablerepair);
 
   //formPopulator(cableRepairItem, cablerepair);
 
   var oem = 'OEM';
-  var oemItem = populateMod(sheet, oem);
+  //var oemItem = populateMod(sheet, oem);
 
   //formPopulator(oemItem, oem);
 
 
   var customstickbox = 'Custom Stickbox';
-  var customstickboxItem = populateMod(sheet, customstickbox);
+  //var customstickboxItem = populateMod(sheet, customstickbox);
 
   //formPopulator(customstickboxItem, customstickbox);
 
   var magnet = 'Stickbox Magnet';
-  var magnetItem = populateMod(sheet, magnet);
+  //var magnetItem = populateMod(sheet, magnet);
 
   //formPopulator(magnetItem, magnet);
 
@@ -131,7 +131,7 @@ function sendtext(e) {
     "Stickbox [Slickbox]": [],
     "Shell [Mario]": [],
     "Shell [White or Emerald]": [],
-    "Email": ["test@gmail.com"],
+    "Email": ["mqjksify@hotmail.com"],
     "Cable Repair": ["OEM 3 Metres"],
     "Custom Stickbox [Tight]": []
 };*/
@@ -147,6 +147,15 @@ function sendtext(e) {
   var contactInfo = formDict["Shipping Address, Name, and anything else you think I need to know."][0];
   var problem = formDict["Please describe the problem and/or choose the repair below"][0];
   var shell = 'Shell'
+  var regionName = formDict["Region"][0];
+  Logger.log(regionName);
+  var priceIndex = 0; //NAPrice
+  var currencySymbol = "$";
+  var region = 0;
+  if (regionName === "EU") {
+    region = 2; //EUPrice
+    currencySymbol = "€"; 
+  }
 
   var prsn = new Customer(name, email, contact, contactInfo);
 
@@ -184,7 +193,7 @@ function sendtext(e) {
       //Logger.log("modtype " + modType);// Remove square brackets and place in array
       if (!userType[modType]) {
         try {
-          userType[modType] = populateMod(sheet, modType, modName, modKey);
+          userType[modType] = populateMod(sheet, modType, region, modName, modKey);
           //Logger.log("Type1: " + userType[modType].typeInfo);
         } catch (error) {
           delete userType[modType];
@@ -202,7 +211,7 @@ function sendtext(e) {
         //Logger.log("key: " + key);
         if (!userType[key]) {
           try {
-            userType[key] = populateMod(sheet, key, m);
+            userType[key] = populateMod(sheet, key, region, m);
             
           } catch (error) {
             console.log(error.message);
@@ -222,15 +231,8 @@ function sendtext(e) {
   
   
 
-  var priceIndex = 0; //NAPrice
-  var currencySymbol = "$";
-  /*if (currency === "EU") {
-    priceIndex = 2; //EUPrice
-    currencySymbol = "€"; 
-  } else if (type === "Full Phob Controller") {
-    priceIndex = 0; //RegularPrice
-  };
-  */
+ 
+  
 
 
   //populate dict with customer order: prices
@@ -259,7 +261,7 @@ function sendtext(e) {
     }
 }
 
-var names = modsList.flat().join(', ');
+  var names = modsList.flat().join(', ');
 
   //make function that sums the values in a dict
   const sumValues = obj => Object.values(obj).reduce((a, b) => a + b, 0);
@@ -275,7 +277,9 @@ var names = modsList.flat().join(', ');
       notesTextTasks += note + ': ' + notes[note] + "\n";
     };
   });
-
+  if (prsn.discord === '') {
+    prsn.discord = prsn.email;
+  }
   // create the email 
   var subject = "MQ - " + prsn.name + " - " + type + " - " + timeDue + " Queue ";
   //subject = type === "Custom Order" ? subject : subject +=" - Queue - " + timeDue;
@@ -284,7 +288,8 @@ var names = modsList.flat().join(', ');
     "Contact: " + prsn.discord + "<br>" +
     "Order type: " + type + "<br>" +
      "Products: " + names + "<br>" +
-    "Price: " + currencySymbol + price + "<br>" +
+    "Price(CAD): " + currencySymbol + price + "<br>" +
+    "Price(USD): " + currencySymbol + price*0.76 + "<br>" +
     notesText + "<br>" +
     "The following is the list of services and their prices:<br><br>" + 
     fullServices + "<br>"; //key + ": " + currencySymbol + orderPrices[key] + "<br>";
@@ -301,6 +306,14 @@ var names = modsList.flat().join(', ');
 
   //Logger.log("Subject: " + subject);
   //Logger.log("Body: " + body);
+  if (emailSarah){
+    MailApp.sendEmail({
+    to: email,
+    subject: subject,
+    htmlBody: body,
+    replyTo: "mqphobgcc@gmail.com",
+    bcc: "sarahtsuipaysrent@gmail.com"
+  }) } else {
   MailApp.sendEmail({
     to: email,
     subject: subject,
@@ -314,15 +327,8 @@ var names = modsList.flat().join(', ');
     htmlBody: body,
     replyTo: "mqphobgcc@gmail.com"
   });
-  if (emailSarah){
-    MailApp.sendEmail({
-    to: "sarahtsuipaysrent@gmail.com",
-    subject: subject,
-    htmlBody: body,
-    replyTo: "mqphobgcc@gmail.com"
-  });
   }
-
+  
   //add sarah email, if bald buttons, paracords, or ergo triggers involved. include amount owed to sarah.
   var taskListId = 'Ymw5U2tVbFJhbVdRRXNWdg';
 

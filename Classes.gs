@@ -7,11 +7,12 @@ class Customer {
   }
 }
 class Type {
-  constructor (name, mods, symmetry, description = 123) {
+  constructor (name, mods, symmetry, region = 0, description = 123) {
     this.name = name;
     this.mods = mods;
     this.symmetry = symmetry;
     this.description = description;
+    this.region = region;
   }
 
   get modsName(){
@@ -38,6 +39,7 @@ class Type {
     this.mods.forEach((mod) => {
       if (mod.name === "Lubrication") {
         if (!(service === "Repair Job or Mods" || service === "Install")) {
+          mod.prices[this.region] = 0;
           return;
         }
       }
@@ -46,10 +48,10 @@ class Type {
         let temp = mod.options[0].split(', ');
         //mod.options[0].split(', '.length);
         if(temp.length > 1){
-          sum += mod.prices[0];
+          sum += mod.prices[this.region];
         }
       }
-      sum += mod.prices[0];
+      sum += mod.prices[this.region];
       Logger.log(sum + " : " + mod.name);
     });
   return sum;
@@ -58,6 +60,10 @@ class Type {
   get prettyType(){
     var output = '';
     var names = this.modsName;
+    var currencySymbol = "$";
+    if (this.region === 2) {
+      currencySymbol = "€";
+    }
     if (this.symmetry){
       var output1 = '<strong>';
       output1+= this.symmetry[0] + ":</strong> <br>";
@@ -67,28 +73,28 @@ class Type {
       var output = '<strong>' + this.name + ":</strong> <br>" ;
     };
     this.mods.forEach((mod) => {
-      //Logger.log(mod.name + " " + mod.prices[0] + " " + mod.options);
+      //Logger.log(mod.name + " " + mod.prices[this.region] + " " + mod.options);
       if (this.name === "Shell") {
         output = '<strong>' + this.name + "(" + mod.options[0] + "): </strong> <br>" + 
-        '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + currencySymbol + mod.prices[this.region] + "<br>";
         return;
       }
       if (mod.options) {
         var options = mod.options[0].split(', ')
       }
       if (this.symmetry && options[0] === this.symmetry[0]) {
-        output1 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        output1 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + currencySymbol + mod.prices[this.region] + "<br>";
         //Logger.log("o1: " + output1);
       }
       if (this.symmetry && options[1] === this.symmetry[1]) {
-        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + currencySymbol + mod.prices[this.region] + "<br>";
         //Logger.log("o2: " + output2);
       } else if (this.symmetry && options[0] === this.symmetry[1]) {
-        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        output2 += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + currencySymbol + mod.prices[this.region] + "<br>";
         //Logger.log("o22: " + output2);
       }
       if (!this.symmetry) {
-        output += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + "$" + mod.prices[0] + "<br>";
+        output += '&nbsp;&nbsp;&nbsp;&nbsp;' + mod.name + ": " + currencySymbol + mod.prices[this.region] + "<br>";
         //Logger.log("output: " + output);
       }
     });
@@ -159,11 +165,11 @@ class Mod{
   }
 }
 
-function populateMod(sheetObj, name, mod = 123, options = []) {
+function populateMod(sheetObj, name, region = "Canada", mod = 123, options = []) {
   sheet = sheetObj.getSheetByName(name);
   modsfromSheet = sheet.getDataRange().getValues();
   var modList = [];
-  var sheetMod = new Type(name, modList, options);
+  var sheetMod = new Type(name, modList, options, region);
   var skip = 0; //skip header of spreadsheet
   for (const mm of modsfromSheet){
 
